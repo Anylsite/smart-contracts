@@ -17,7 +17,7 @@ contract DeviceManager {
         return registeredDeviceIds.length;
     }
     
-    function getDeviceRegistrationByIndex(uint deviceRegistrationIndex) public returns (string, string) {
+    function getDeviceRegistrationByIndex(uint deviceRegistrationIndex) public view returns (string, string) {
         string storage deviceId = registeredDeviceIds[deviceRegistrationIndex];
         
         return (deviceId, registeredDevices[deviceId]);
