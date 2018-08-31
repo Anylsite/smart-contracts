@@ -64,7 +64,8 @@ contract SupplychainContract {
 
     }
 
-    //Creating the Product
+    //producting the Product in process
+
     function produceProduct(uint id) public{
 
     }
