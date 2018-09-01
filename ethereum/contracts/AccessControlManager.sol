@@ -64,10 +64,10 @@ contract AccessControlManager is Ownable{
         
 
     function hashIndex(address owner, bytes32 resource_id) internal pure returns (bytes32) {
-        return keccak256(owner, resource_id);
+        return keccak256(abi.encodePacked(owner, resource_id));
     }
 
     function equals(string a, string b) internal pure returns (bool) {
-        return keccak256(a) == keccak256(b);
+        return keccak256(abi.encodePacked(a)) == keccak256(abi.encodePacked(b));
     }
 }
