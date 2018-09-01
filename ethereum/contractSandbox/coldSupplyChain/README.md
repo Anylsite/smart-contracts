@@ -6,4 +6,4 @@
 2) Refunding to customer from insurer in case of exceeding the temperature range
 
 Need to be reviewed 
-Changes to the file.
+Changes to the file

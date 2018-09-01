@@ -46,7 +46,7 @@ contract SupplychainContract {
     }
 
 
-    // When Product is shipped, this function gets called
+    // When Product is shipped,
     function shipProduct(uint id, string name,uint cost, address producer_add, address shipper_add, address customer_add) public{
         require(msg.sender == items[id].shipper,shipp_err);
         items.push(PerishableItem(id,name,cost,producer_add,shipper_add,customer_add,0));
@@ -64,7 +64,7 @@ contract SupplychainContract {
 
     }
 
-    //producting the Product in process
+    //product creation from producer end
 
     function produceProduct(uint id) public{
 
