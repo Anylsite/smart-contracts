@@ -214,4 +214,14 @@ contract TraceabilitySupplyChain {
 
         emit StatusUpdated(id, Status.REFUNDED);
     }
+
+    /** 
+    * @dev Check whether shipment exists
+    * @param id Shipment Id
+    */
+    function checkShipment(uint256 id)external view returns(bool exists){
+
+        exists = idVsShipment[id].producer == address(0);
+
+    }
 }
