@@ -221,7 +221,7 @@ contract TraceabilitySupplyChain {
     */
     function checkShipment(uint256 id)external view returns(bool exists){
 
-        exists = idVsShipment[id].producer == address(0);
+        exists = idVsShipment[id].producer != address(0);
 
     }
 }
