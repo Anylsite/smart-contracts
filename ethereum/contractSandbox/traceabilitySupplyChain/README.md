@@ -56,10 +56,11 @@ Network Artifacts
 truffle networks
 ```
 
-Testing
+Live Preview Link
 -------------------
-### Run all tests (requires Node version >=8 for `async/await`, and will automatically run TestRPC in the background):
+### https://traceabilitiyscm.herokuapp.com/
 
-```bash
-truffle test
-```
+Contract address on rinkeby
+-------------------
+### https://rinkeby.etherscan.io/address/0x91e36e361ec6aca33cf6509a0691b0e7c6eebb2c
+
