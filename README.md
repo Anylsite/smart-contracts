@@ -1,2 +1,2 @@
 # smart-contracts
-📜 Smart Contracts used by AnyLedger Hub
+📜 Smart Contracts used by AnyLedger Hub.
