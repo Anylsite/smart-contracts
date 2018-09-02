@@ -32,13 +32,13 @@ contract TraceabilitySupplyChain {
 
     address public controlAuthority;//Wallet address of the control authority
 
-    event ShipmentAdded(uint256 id);
+    event ShipmentAdded(uint256 indexed id);
 
-    event SensorPlaced(uint256 id, address sensor);
+    event SensorPlaced(uint256 indexed id, address sensor);
 
-    event LocationUpdated(uint256 id, string latitude, string longitude);
+    event LocationUpdated(uint256 indexed id, string latitude, string longitude);
 
-    event StatusUpdated(uint256 id, Status status);
+    event StatusUpdated(uint256 indexed id, Status status);
 
     modifier nonZeroAddress(address _address){
         require(_address != address(0), "Zero address not acceptable");
