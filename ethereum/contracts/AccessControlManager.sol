@@ -1,8 +1,8 @@
 pragma solidity ^0.4.23;
 
-contract AccessControlManager {
-    address private m_owner;
+import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 
+contract AccessControlManager is Ownable{
     
     uint8 constant PERM_R = 1;
     uint8 constant PERM_W = 1 << 1;
@@ -24,27 +24,12 @@ contract AccessControlManager {
     // key = keccak256(owner, device_id), value = permissions bit array
     mapping(bytes32 => uint8) private m_access_list;
 
-    modifier isOwner(address sender) {
-        require(
-            sender == m_owner,
-            "only owner is allowed to call this function"
-        );
-        _;
-    }
     modifier isNotEmpty(string str) {
         require(
             equals(str, "") == false,
             "string must not be empty"
         );
         _;
-    }
-
-    constructor(
-        address owner
-    )
-        public
-    {
-        m_owner = owner;
     }
     
     function hasAcccess(
@@ -69,7 +54,7 @@ contract AccessControlManager {
         bytes32 resource_id,
         uint8 permissions
     )
-        isOwner(msg.sender)
+        onlyOwner
     public
     {
         require((permissions & ~(PERM_RWX)) == 0); // only rwx bits can be set
@@ -79,10 +64,10 @@ contract AccessControlManager {
         
 
     function hashIndex(address owner, bytes32 resource_id) internal pure returns (bytes32) {
-        return keccak256(owner, resource_id);
+        return keccak256(abi.encodePacked(owner, resource_id));
     }
 
     function equals(string a, string b) internal pure returns (bool) {
-        return keccak256(a) == keccak256(b);
+        return keccak256(abi.encodePacked(a)) == keccak256(abi.encodePacked(b));
     }
 }
