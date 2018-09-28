@@ -1,14 +1,15 @@
-pragma solidity ^0.4.8;
+pragma solidity ^0.4.23;
 
-contract AccessControlManager {
-    address private deviceOwner = 0x7d9ae42dd0B5c458D15a2DC4d52459C3CD554d8B;
+import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
+
+contract AccessControlManager is Ownable{
     
-    // Using struct instead of Enum due to gas costs when iterating over an array with Permissions
-    struct Permissions { 
-        bool canRead;
-        bool canWrite;
-        bool canExecute;
-    }
+    uint8 constant PERM_R = 1;
+    uint8 constant PERM_W = 1 << 1;
+    uint8 constant PERM_X = 1 << 2;
+    uint8 constant PERM_RWX = PERM_R | PERM_W | PERM_X;
+
+    uint8 constant PERM_SET = 1 << 7;
     
     struct Resource {
         string id;
@@ -17,42 +18,56 @@ contract AccessControlManager {
     
     struct Entitlement {
         Resource resource;
-        Permissions permissions;
+        uint8 permissions;
     }
     
-    mapping(address => Entitlement[]) private entitlements;
-    
-    function hasAcccess(string resourceId, bool canWrite, bool canRead, bool canExecute) public view returns (bool) {
-        // Device owner has Administrator level access
-        if (msg.sender == deviceOwner)
-            return true;
-        
-        Entitlement[] storage currentEntitlements = entitlements[msg.sender];
-        
-        if (currentEntitlements.length == 0)
-            return false;
+    // key = keccak256(owner, device_id), value = permissions bit array
+    mapping(bytes32 => uint8) private m_access_list;
 
-        // Iterate over all Entitlements   
-        for (uint entitlementIndex = 0; entitlementIndex < currentEntitlements.length; entitlementIndex++) {
-
-            // Check if there is a matching Resource with the requested Resource Id
-            if (compareStrings(currentEntitlements[entitlementIndex].resource.id, resourceId)) {
-
-                // Check if the requested permissions are matching the allowed ones
-                if (canRead == currentEntitlements[entitlementIndex].permissions.canRead &&
-                    canWrite == currentEntitlements[entitlementIndex].permissions.canWrite &&
-                    canExecute == currentEntitlements[entitlementIndex].permissions.canExecute) {
-                        return true;
-                    }
-                
-                return false;
-            }
-        }
-        
-        return false;
+    modifier isNotEmpty(string str) {
+        require(
+            equals(str, "") == false,
+            "string must not be empty"
+        );
+        _;
     }
     
-    function compareStrings(string firstString, string secondString) public pure returns (bool) {
-        return keccak256(firstString) == keccak256(secondString);
+    function hasAcccess(
+        bytes32 resource_id,
+        uint8 permissions
+    ) 
+    public view returns (bool) 
+    {
+        bytes32 idx = hashIndex(msg.sender, resource_id);
+        uint8 resource_permissions = m_access_list[idx];
+        
+        require(
+            (permissions & PERM_SET) == 0,
+            "record not found"
+        );
+
+        return resource_permissions == permissions;
+    }
+
+    function setAccess(
+        address sender,
+        bytes32 resource_id,
+        uint8 permissions
+    )
+        onlyOwner
+    public
+    {
+        require((permissions & ~(PERM_RWX)) == 0); // only rwx bits can be set
+        bytes32 idx = hashIndex(msg.sender, resource_id);
+        m_access_list[idx] = permissions & PERM_SET;
+    }
+        
+
+    function hashIndex(address owner, bytes32 resource_id) internal pure returns (bytes32) {
+        return keccak256(abi.encodePacked(owner, resource_id));
+    }
+
+    function equals(string a, string b) internal pure returns (bool) {
+        return keccak256(abi.encodePacked(a)) == keccak256(abi.encodePacked(b));
     }
 }
